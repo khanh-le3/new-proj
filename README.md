@@ -212,5 +212,52 @@ const NewCompany = ({ setCompanies }) => {
 
 export default NewCompany;
 
+## EDit Comapny
+import React, { useState } from 'react';
+
+const EditCompany = ({ company, setIsEditing, setCompanies }) => {
+    const [name, setName] = useState(company.company_name);
+    const [address, setAddress] = useState(company.company_address);
+
+    const updateCompany = async (e) => {
+        e.preventDefault();
+        const response = await fetch(`http://localhost/api/companies/${company.company_id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ company_name: name, company_address: address, contact_id: company.contact_id })
+        });
+
+        const updatedCompany = await response.json();
+        setCompanies(prevCompanies => prevCompanies.map(c => c.company_id === updatedCompany.company_id ? updatedCompany : c));
+        setIsEditing(false);
+    };
+
+    return (
+        <form onSubmit={updateCompany}>
+            <input
+                type="text"
+                placeholder="Company Name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+            />
+            <input
+                type="text"
+                placeholder="Company Address"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                required
+            />
+            <button type="submit">Save</button>
+            <button onClick={() => setIsEditing(false)}>Cancel</button>
+        </form>
+    );
+};
+
+export default EditCompany;
+
+
 
 
