@@ -270,5 +270,18 @@ export default EditCompany;
             <CompanyList companies={companies} setCompanies={setCompanies} contact={contact} />
         </div>
 
+<input
+        type="text"
+        placeholder="Company Name"
+        value={companyName}
+        onChange={(e) => setCompanyName(e.target.value)}
+      />
+      <input
+        type="text"
+        placeholder="Company Address"
+        value={companyAddress}
+        onChange={(e) => setCompanyAddress(e.target.value)}
+      />
+
 
 
