@@ -257,7 +257,10 @@ const EditCompany = ({ company, setIsEditing, setCompanies }) => {
 };
 
 export default EditCompany;
-
+<div className="App">
+      <h1>Company Management</h1>
+      <CompanyList />
+    </div>
 
 
 
