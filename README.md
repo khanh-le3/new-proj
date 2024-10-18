@@ -156,3 +156,61 @@ http get http://localhost/api/contacts/1/phones
 2.8. Show the API command for “Update Phone” and provide a screenshot of the output 
 
 
+import React, { useState } from 'react';
+
+const NewCompany = ({ setCompanies }) => {
+    const [name, setName] = useState('');
+    const [address, setAddress] = useState('');
+    const [contactId, setContactId] = useState('');
+
+    const createCompany = async (e) => {
+        e.preventDefault();
+        const response = await fetch('http://localhost/api/companies', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ company_name: name, company_address: address, contact_id: contactId })
+        });
+
+        const newCompany = await response.json();
+        setCompanies(prevCompanies => [...prevCompanies, newCompany]);
+
+        setName('');
+        setAddress('');
+        setContactId('');
+    };
+
+    return (
+        <form onSubmit={createCompany}>
+            <h3>Create New Company</h3>
+            <input
+                type="text"
+                placeholder="Company Name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+            />
+            <input
+                type="text"
+                placeholder="Company Address"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                required
+            />
+            <input
+                type="number"
+                placeholder="Contact ID"
+                value={contactId}
+                onChange={(e) => setContactId(e.target.value)}
+                required
+            />
+            <button type="submit">Add Company</button>
+        </form>
+    );
+};
+
+export default NewCompany;
+
+
+
