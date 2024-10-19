@@ -400,3 +400,109 @@ function Company(props) {
 
 export default Company;
 
+# New
+import React, { useState } from 'react';
+
+function Company(props) {
+    const { contact, company, companies, setCompanies } = props;
+
+    // State to handle editing
+    const [isEditing, setIsEditing] = useState(false);
+    const [companyName, setCompanyName] = useState(company.company_name);
+    const [companyAddress, setCompanyAddress] = useState(company.company_address);
+
+    // Delete Company Function
+    async function deleteCompany() {
+        const response = await fetch('http://localhost/api/contacts/' + contact.id + '/companies/' + company.company_id, {
+            method: 'DELETE',
+        });
+
+        let newCompanies = companies.filter((p) => {
+            return p.company_id !== company.company_id;
+        });
+
+        setCompanies(newCompanies);
+    }
+
+    // Update Company Function
+    async function updateCompany(e) {
+        e.preventDefault(); // Prevent form submission
+
+        const response = await fetch('http://localhost/api/contacts/' + contact.id + '/companies/' + company.company_id, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                company_name: companyName,
+                company_address: companyAddress,
+            }),
+        });
+
+        const updatedCompany = await response.json();
+
+        // Update the state with the new company data
+        let updatedCompanies = companies.map((c) =>
+            c.company_id === company.company_id ? updatedCompany : c
+        );
+
+        setCompanies(updatedCompanies);
+        setIsEditing(false); // Exit edit mode
+    }
+
+    return (
+        <tr>
+            {isEditing ? (
+                // Edit mode: render a form for updating company details
+                <>
+                    <td>
+                        <input
+                            type="text"
+                            value={companyName}
+                            onChange={(e) => setCompanyName(e.target.value)}
+                        />
+                    </td>
+                    <td>
+                        <input
+                            type="text"
+                            value={companyAddress}
+                            onChange={(e) => setCompanyAddress(e.target.value)}
+                        />
+                    </td>
+                    <td style={{ width: '14px' }}>
+                        <button className="button green" onClick={updateCompany}>
+                            Save
+                        </button>
+                        <button
+                            className="button yellow"
+                            onClick={() => setIsEditing(false)}
+                        >
+                            Cancel
+                        </button>
+                    </td>
+                </>
+            ) : (
+                // View mode: render the company details
+                <>
+                    <td>{company.company_name}</td>
+                    <td>{company.company_address}</td>
+                    <td style={{ width: '14px' }}>
+                        <button className="button blue" onClick={() => setIsEditing(true)}>
+                            Edit
+                        </button>
+                        <button className="button red" onClick={deleteCompany}>
+                            Delete Company
+                        </button>
+                    </td>
+                </>
+            )}
+        </tr>
+    );
+}
+
+export default Company;
+
+
+
+
+
