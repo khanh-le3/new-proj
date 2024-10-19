@@ -313,4 +313,90 @@ function Company(props) {
 
 export default Company;
 
+# update
+
+import React, { useState } from 'react';
+
+function Company(props) {
+  const { contact, company, companies, setCompanies } = props;
+  const [isEditing, setIsEditing] = useState(false);
+  const [companyName, setCompanyName] = useState(company.company_name);
+  const [companyAddress, setCompanyAddress] = useState(company.company_address);
+
+  async function deleteCompany() {
+    const response = await fetch('http://localhost:5000/api/companies/' + company.company_id, {
+      method: 'DELETE',
+    });
+
+    if (response.ok) {
+      let newCompanies = companies.filter((p) => {
+        return p.company_id !== company.company_id;
+      });
+      setCompanies(newCompanies);
+    } else {
+      console.error('Failed to delete the company');
+    }
+  }
+
+  async function updateCompany() {
+    const response = await fetch('http://localhost:5000/api/companies/' + company.company_id, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        company_name: companyName,
+        company_address: companyAddress,
+        contact_id: contact.id
+      })
+    });
+
+    if (response.ok) {
+      const updatedCompany = await response.json();
+      let newCompanies = companies.map((c) => (c.company_id === company.company_id ? updatedCompany : c));
+      setCompanies(newCompanies);
+      setIsEditing(false);
+    } else {
+      console.error('Failed to update the company');
+    }
+  }
+
+  return (
+    <tr>
+      {isEditing ? (
+        <>
+          <td>
+            <input
+              type="text"
+              value={companyName}
+              onChange={(e) => setCompanyName(e.target.value)}
+            />
+          </td>
+          <td>
+            <input
+              type="text"
+              value={companyAddress}
+              onChange={(e) => setCompanyAddress(e.target.value)}
+            />
+          </td>
+          <td style={{ width: '14px' }}>
+            <button className="button green" onClick={updateCompany}>Save</button>
+            <button className="button red" onClick={() => setIsEditing(false)}>Cancel</button>
+          </td>
+        </>
+      ) : (
+        <>
+          <td>{company.company_name}</td>
+          <td>{company.company_address}</td>
+          <td style={{ width: '14px' }}>
+            <button className="button blue" onClick={() => setIsEditing(true)}>Edit</button>
+            <button className="button red" onClick={deleteCompany}>Delete</button>
+          </td>
+        </>
+      )}
+    </tr>
+  );
+}
+
+export default Company;
 
