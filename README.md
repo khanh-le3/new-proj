@@ -502,7 +502,7 @@ function Company(props) {
 
 export default Company;
 
-![][pic/1.5Result.png]
+![](pic/1.5Result.png)
 
 
 
